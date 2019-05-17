@@ -1,10 +1,13 @@
 'use strict';
-import React, { Component, PropTypes } from 'react'
+
+import React, { Component } from 'react'
 import {
   View,
   StyleSheet,
   Image,
 } from 'react-native';
+
+import PropTypes from 'prop-types'
 
 export default class StarRating extends Component {
   static defaultProps = {
@@ -35,6 +38,7 @@ export default class StarRating extends Component {
     this._onLayout = this._onLayout.bind(this);
     this._onResponderMove = this._onResponderMove.bind(this);
     this._onResponderGrant = this._onResponderGrant.bind(this);
+    this._onResponderRelease = this._onResponderRelease.bind(this);
   }
 
   render() {
@@ -74,10 +78,11 @@ export default class StarRating extends Component {
     return (
       <View
         style={styles.container}
-        onStartShouldSetResponder={this._onStartShouldSetResponder}
-        onMoveShouldSetResponder={this._onMoveShouldSetResponder}
+        onStartShouldSetResponderCapture={this._onStartShouldSetResponder}
+        onMoveShouldSetResponderCapture={this._onMoveShouldSetResponder}
         onResponderGrant={this._onResponderGrant}
         onResponderMove={this._onResponderMove}
+        onResponderRelease={ this._onResponderRelease }
       >
         {starArray}
       </View>
@@ -85,7 +90,6 @@ export default class StarRating extends Component {
   }
 
   _onLayout(layoutInfo) {
-    console.log(layoutInfo.nativeEvent.layout);
     var starSize = layoutInfo.nativeEvent.layout.width;
     //已经设置过starSize，不需要再设置
     if(this.state.starSize > 0) {
@@ -119,6 +123,10 @@ export default class StarRating extends Component {
     this._updateChangeValue(evt);
   }
 
+  _onResponderRelease(evt) {
+    this.props.valueChanged(this.state.rating);
+  }
+
   _updateChangeValue(evt) {
     var starWidth = this.state.starSize + this.props.interitemSpacing;
     var rating = Math.ceil((evt.nativeEvent.pageX-this.state.containerLayout.x)/starWidth);
@@ -131,10 +139,7 @@ export default class StarRating extends Component {
     this.setState({
       rating: rating,
     });
-    //value changed
-    this.props.valueChanged(rating);
   }
-
 };
 
 const styles = StyleSheet.create({
