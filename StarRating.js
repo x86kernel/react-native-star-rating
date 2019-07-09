@@ -5,9 +5,10 @@ import {
   View,
   StyleSheet,
   Image,
-} from 'react-native';
+} from 'react-native'
 
 import PropTypes from 'prop-types'
+import ReactNativeHaptic from 'react-native-haptic'
 
 export default class StarRating extends Component {
   static defaultProps = {
@@ -107,20 +108,21 @@ export default class StarRating extends Component {
 
   //是否应该成为响应者
   _onStartShouldSetResponder(evt) {
-    return true;
+    return true
   }
 
   //移动的时候是否成为响应者
   _onMoveShouldSetResponder(evt) {
-    return true;
+    return true
   }
 
   _onResponderGrant(evt) {
-    this._updateChangeValue(evt);
+    ReactNativeHaptic.generate('impact')
+    this._updateChangeValue(evt)
   }
   //正在移动
   _onResponderMove(evt) {
-    this._updateChangeValue(evt);
+    this._updateChangeValue(evt)
   }
 
   _onResponderRelease(evt) {
@@ -130,12 +132,19 @@ export default class StarRating extends Component {
   _updateChangeValue(evt) {
     var starWidth = this.state.starSize + this.props.interitemSpacing;
     var rating = Math.ceil((evt.nativeEvent.pageX-this.state.containerLayout.x)/starWidth);
+
     if(rating < 0) {
       rating = 0;
     }
+
     else if(rating > this.state.maxStars) {
       rating = this.state.maxStars;
     }
+
+    if(rating !== this.state.rating) {
+      ReactNativeHaptic.generate('impact')
+    }
+
     this.setState({
       rating: rating,
     });
