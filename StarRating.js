@@ -8,7 +8,11 @@ import {
 } from 'react-native'
 
 import PropTypes from 'prop-types'
-import ReactNativeHaptic from 'react-native-haptic'
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback'
+
+const hapticOptions = {
+  ignoreAndroidSystemSettings: true,
+}
 
 export default class StarRating extends Component {
   static defaultProps = {
@@ -117,7 +121,8 @@ export default class StarRating extends Component {
   }
 
   _onResponderGrant(evt) {
-    ReactNativeHaptic.generate('impact')
+    ReactNativeHapticFeedback.trigger('impactLight', hapticOptions)
+
     this._updateChangeValue(evt)
   }
   //正在移动
@@ -142,7 +147,7 @@ export default class StarRating extends Component {
     }
 
     if(rating !== this.state.rating) {
-      ReactNativeHaptic.generate('impact')
+      ReactNativeHapticFeedback.trigger('impactLight', hapticOptions)
     }
 
     this.setState({
