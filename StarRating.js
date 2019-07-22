@@ -21,6 +21,8 @@ export default class StarRating extends Component {
     starSize: -1,
     interitemSpacing: 0,
     valueChanged: (index) => {},
+    onResponderGrant: () => null,
+    onResponderRelease: () => null,
   };
   static propTypes = {
     maxStars: PropTypes.number,
@@ -40,10 +42,13 @@ export default class StarRating extends Component {
       firstImageLayout: null,
       starSize: this.props.starSize,
     };
+
     this._onLayout = this._onLayout.bind(this);
     this._onResponderMove = this._onResponderMove.bind(this);
     this._onResponderGrant = this._onResponderGrant.bind(this);
     this._onResponderRelease = this._onResponderRelease.bind(this);
+
+    this._grantedLocationY = null
   }
 
   render() {
@@ -121,17 +126,31 @@ export default class StarRating extends Component {
   }
 
   _onResponderGrant(evt) {
-    ReactNativeHapticFeedback.trigger('impactLight', hapticOptions)
+    this._grantedLocationY = evt.nativeEvent.locationY
 
-    this._updateChangeValue(evt)
+    this.props.onResponderGrant()
+    this._updateChangeValue(evt);
   }
+
   //正在移动
   _onResponderMove(evt) {
-    this._updateChangeValue(evt)
+    const { locationY, } = evt.nativeEvent
+
+    if(locationY < this._grantedLocationY + 50 && locationY > this._grantedLocationY - 50) {
+      this._updateChangeValue(evt);
+    }
   }
 
   _onResponderRelease(evt) {
-    this.props.valueChanged(this.state.rating);
+    const { locationY, } = evt.nativeEvent
+
+    this.props.onResponderRelease()
+
+    if(locationY < this._grantedLocationY + 50 && locationY > this._grantedLocationY - 50) {
+      this.props.valueChanged(this.state.rating);
+    }
+
+    this._gratedLocationY = null
   }
 
   _updateChangeValue(evt) {
