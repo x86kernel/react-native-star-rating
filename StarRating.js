@@ -5,6 +5,7 @@ import {
   View,
   StyleSheet,
   Image,
+  Platform,
 } from 'react-native'
 
 import PropTypes from 'prop-types'
@@ -32,6 +33,7 @@ export default class StarRating extends Component {
     valueChanged: PropTypes.func,
     starSize: PropTypes.number,
     interitemSpacing: PropTypes.number,
+    maxLocationY: PropTypes.number.isRequired,
   };
 
   constructor(props) {
@@ -126,7 +128,7 @@ export default class StarRating extends Component {
   }
 
   _onResponderGrant(evt) {
-    this._grantedLocationY = evt.nativeEvent.locationY
+    this._grantedLocationY = Platform.OS === 'ios' ? evt.nativeEvent.locationY : evt.nativeEvent.pageY
 
     this.props.onResponderGrant()
     this._updateChangeValue(evt);
@@ -134,20 +136,34 @@ export default class StarRating extends Component {
 
   //正在移动
   _onResponderMove(evt) {
-    const { locationY, } = evt.nativeEvent
+    const { maxLocationY } = this.props
+    const { locationY, pageY, } = evt.nativeEvent
 
-    if(locationY < this._grantedLocationY + 50 && locationY > this._grantedLocationY - 50) {
-      this._updateChangeValue(evt);
+    if(Platform.OS === 'ios') {
+      if(locationY < this._grantedLocationY + maxLocationY && locationY > this._grantedLocationY - maxLocationY) {
+        this._updateChangeValue(evt);
+      }
+    } else {
+      if(pageY < this._grantedLocationY + maxLocationY && pageY > this._grantedLocationY - maxLocationY) {
+        this._updateChangeValue(evt);
+      }
     }
   }
 
   _onResponderRelease(evt) {
-    const { locationY, } = evt.nativeEvent
+    const { maxLocationY, } = this.props
+    const { locationY, pageY, } = evt.nativeEvent
 
     this.props.onResponderRelease()
 
-    if(locationY < this._grantedLocationY + 50 && locationY > this._grantedLocationY - 50) {
-      this.props.valueChanged(this.state.rating);
+    if(Platform.OS === 'ios') {
+      if(locationY < this._grantedLocationY + maxLocationY && locationY > this._grantedLocationY - maxLocationY) {
+        this.props.valueChanged(this.state.rating);
+      }
+    } else {
+      if(pageY < this._grantedLocationY + maxLocationY && pageY > this._grantedLocationY - maxLocationY) {
+        this.props.valueChanged(this.state.rating);
+      }
     }
 
     this._gratedLocationY = null
