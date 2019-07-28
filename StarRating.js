@@ -24,7 +24,9 @@ export default class StarRating extends Component {
     valueChanged: (index) => {},
     onResponderGrant: () => null,
     onResponderRelease: () => null,
+    onResponderTerminate: () => null,
   };
+
   static propTypes = {
     maxStars: PropTypes.number,
     rating: PropTypes.number,
@@ -92,9 +94,11 @@ export default class StarRating extends Component {
         style={styles.container}
         onStartShouldSetResponderCapture={this._onStartShouldSetResponder}
         onMoveShouldSetResponderCapture={this._onMoveShouldSetResponder}
+        onResponderTerminationRequest={ this._onResponderTerminationRequest }
         onResponderGrant={this._onResponderGrant}
         onResponderMove={this._onResponderMove}
         onResponderRelease={ this._onResponderRelease }
+        onResponderTerminate={ this.props.onResponderTerminate }
       >
         {starArray}
       </View>
@@ -124,6 +128,10 @@ export default class StarRating extends Component {
 
   //移动的时候是否成为响应者
   _onMoveShouldSetResponder(evt) {
+    return true
+  }
+
+  _onResponderTerminationRequest = () => {
     return true
   }
 
