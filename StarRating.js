@@ -190,7 +190,7 @@ export default class StarRating extends Component {
     }
 
     if(rating !== this.state.rating) {
-      ReactNativeHapticFeedback.trigger('impactLight', hapticOptions)
+      ReactNativeHapticFeedback.trigger('impactHeavy', hapticOptions)
     }
 
     this.setState({
