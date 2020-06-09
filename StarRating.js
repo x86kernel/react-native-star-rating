@@ -89,7 +89,7 @@ export default class StarRating extends Component {
           source={imageSource}
           style={styleArray}
           onLayout={onLayoutFunc}
-          { ... imageProps }
+          { ... this.props.imageProps }
         />
       );
     }
