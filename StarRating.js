@@ -25,6 +25,7 @@ export default class StarRating extends Component {
     onResponderGrant: () => null,
     onResponderRelease: () => null,
     onResponderTerminate: () => null,
+    imageProps: {},
   };
 
   static propTypes = {
@@ -36,10 +37,12 @@ export default class StarRating extends Component {
     starSize: PropTypes.number,
     interitemSpacing: PropTypes.number,
     maxLocationY: PropTypes.number.isRequired,
+    imageProps: PropTypes.object,
   };
 
   constructor(props) {
     super(props);
+
     this.state = {
       maxStars: this.props.maxStars,
       rating: this.props.rating,
@@ -86,6 +89,7 @@ export default class StarRating extends Component {
           source={imageSource}
           style={styleArray}
           onLayout={onLayoutFunc}
+          { ... imageProps }
         />
       );
     }
